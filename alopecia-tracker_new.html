@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alopecia Treatment & Routine Tracker</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Mono:wght@400;500&display=swap');
+
+        :root {
+            --bg: #f0f2f0;
+            --surface: #ffffff;
+            --surface-raised: #fafafa;
+            --primary: #3d6b4f;
+            --primary-mid: #5a8f6c;
+            --primary-light: #e8f2eb;
+            --primary-xlight: #f3f9f5;
+            --accent: #b5813f;
+            --accent-light: #fdf3e3;
+            --danger: #c0392b;
+            --danger-light: #fdf0ee;
+            --text: #1a1f1c;
+            --text-mid: #4a5450;
+            --text-muted: #8a9490;
+            --border: #e2e8e4;
+            --border-strong: #cdd6d0;
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.05);
+            --font: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-mono: 'DM Mono', monospace;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 24px 16px 48px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .app {
+            max-width: 640px;
+            width: 100%;
+        }
+
+        /* ── Header ── */
+        .app-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .app-header h1 {
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--primary);
+            margin: 0 0 2px;
+            letter-spacing: -0.3px;
+        }
+
+        .app-header p {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin: 0;
+            font-weight: 400;
+        }
+
+        .date-badge {
+            background: var(--primary-light);
+            color: var(--primary);
+            font-size: 12px;
+            font-weight: 500;
+            padding: 5px 10px;
+            border-radius: 20px;
+            white-space: nowrap;
+            font-family: var(--font-mono);
+            letter-spacing: 0.2px;
+            flex-shrink: 0;
+        }
+
+        /* ── Analytics Strip ── */
+        .analytics-strip {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 14px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .stat-card .stat-label {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            margin-bottom: 6px;
+        }
+
+        .stat-card .stat-value {
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1;
+            font-family: var(--font-mono);
+        }
+
+        .stat-card .stat-sub {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .trend-up { color: var(--danger); }
+        .trend-down { color: var(--primary-mid); }
+        .trend-stable { color: var(--accent); }
+
+        /* ── Card ── */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-bottom: 14px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .card-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-mid);
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+            margin: 0 0 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        /* ── Form Controls ── */
+        .field-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .field-row:last-child { margin-bottom: 0; }
+
+        label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-mid);
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            accent-color: var(--primary);
+            height: 4px;
+            cursor: pointer;
+        }
+
+        .range-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .range-wrap input { flex: 1; }
+
+        .range-value {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--primary);
+            min-width: 48px;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .toggle-row:last-child { border-bottom: none; }
+
+        .toggle-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        /* Toggle switch */
+        .toggle {
+            position: relative;
+            width: 38px;
+            height: 22px;
+            flex-shrink: 0;
+        }
+
+        .toggle input { opacity: 0; width: 0; height: 0; }
+
+        .toggle-track {
+            position: absolute;
+            inset: 0;
+            background: var(--border-strong);
+            border-radius: 22px;
+            transition: background 0.2s;
+            cursor: pointer;
+        }
+
+        .toggle input:checked + .toggle-track { background: var(--primary); }
+
+        .toggle-track::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: white;
+            top: 3px;
+            left: 3px;
+            transition: transform 0.2s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .toggle input:checked + .toggle-track::after { transform: translateX(16px); }
+
+        /* ── Multi-Spot Section ── */
+        .spots-list { display: flex; flex-direction: column; gap: 10px; }
+
+        .spot-item {
+            background: var(--primary-xlight);
+            border: 1px solid var(--primary-light);
+            border-radius: var(--radius-md);
+            padding: 14px;
+        }
+
+        .spot-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .spot-name-input {
+            font-family: var(--font);
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--primary);
+            background: transparent;
+            border: none;
+            outline: none;
+            border-bottom: 1px dashed var(--primary-mid);
+            padding: 2px 4px;
+            width: 180px;
+        }
+
+        .spot-name-input::placeholder { color: var(--primary-mid); font-style: italic; }
+
+        .spot-viz {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .spot-circle-wrap {
+            width: 64px;
+            height: 64px;
+            background: var(--surface);
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .spot-circle {
+            background: radial-gradient(circle at 35% 35%, #e8c4a8, #c9906a);
+            border-radius: 50%;
+            border: 1.5px dashed rgba(0,0,0,0.12);
+            transition: width 0.15s, height 0.15s;
+        }
+
+        .btn-remove-spot {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 18px;
+            padding: 2px 6px;
+            line-height: 1;
+            border-radius: var(--radius-sm);
+            transition: color 0.15s, background 0.15s;
+            width: auto;
+        }
+
+        .btn-remove-spot:hover { color: var(--danger); background: var(--danger-light); }
+
+        .btn-add-spot {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            background: none;
+            border: 1.5px dashed var(--primary-mid);
+            color: var(--primary);
+            border-radius: var(--radius-md);
+            padding: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.15s;
+            width: 100%;
+            margin-top: 4px;
+        }
+
+        .btn-add-spot:hover { background: var(--primary-xlight); }
+
+        /* ── Photo Upload ── */
+        .photo-drop {
+            border: 1.5px dashed var(--border-strong);
+            border-radius: var(--radius-md);
+            padding: 18px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.15s, background 0.15s;
+            position: relative;
+        }
+
+        .photo-drop:hover { border-color: var(--primary-mid); background: var(--primary-xlight); }
+
+        .photo-drop input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
+
+        .photo-drop-icon { font-size: 28px; margin-bottom: 6px; }
+        .photo-drop-label { font-size: 13px; color: var(--text-muted); }
+        .photo-drop-label strong { color: var(--primary); }
+
+        .photo-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .photo-thumb-wrap { position: relative; }
+
+        .photo-thumb {
+            width: 64px;
+            height: 64px;
+            object-fit: cover;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            display: block;
+        }
+
+        .photo-remove {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--danger);
+            color: white;
+            border: none;
+            font-size: 11px;
+            line-height: 18px;
+            text-align: center;
+            cursor: pointer;
+            padding: 0;
+            width: auto;
+        }
+
+        /* ── Insight Box ── */
+        .insight-box {
+            background: var(--accent-light);
+            border-left: 3px solid var(--accent);
+            padding: 10px 12px;
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+            font-size: 12px;
+            line-height: 1.5;
+            color: var(--text-mid);
+            margin-top: 10px;
+            display: none;
+        }
+
+        .insight-box.show { display: block; }
+        .insight-box strong { color: var(--accent); }
+
+        /* ── Buttons ── */
+        .btn-primary {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 13px;
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            font-family: var(--font);
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            letter-spacing: 0.1px;
+        }
+
+        .btn-primary:hover { background: #2e5239; }
+        .btn-primary:active { transform: scale(0.99); }
+
+        /* ── History Table ── */
+        .history-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .history-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-mid);
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+        }
+
+        .btn-clear {
+            font-size: 12px;
+            color: var(--text-muted);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: var(--radius-sm);
+            width: auto;
+            font-family: var(--font);
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .btn-clear:hover { background: var(--danger-light); color: var(--danger); }
+
+        .table-wrap { overflow-x: auto; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12.5px;
+        }
+
+        thead th {
+            background: var(--primary-xlight);
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 8px 10px;
+            text-align: left;
+            border-bottom: 1px solid var(--primary-light);
+        }
+
+        tbody tr {
+            border-bottom: 1px solid var(--border);
+            transition: background 0.1s;
+        }
+
+        tbody tr:last-child { border-bottom: none; }
+        tbody tr:hover { background: var(--surface-raised); }
+
+        tbody td {
+            padding: 8px 10px;
+            color: var(--text-mid);
+            vertical-align: middle;
+        }
+
+        tbody td strong { color: var(--text); }
+
+        .log-thumbs {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+
+        .log-thumb {
+            width: 32px;
+            height: 32px;
+            object-fit: cover;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: transform 0.15s;
+        }
+
+        .log-thumb:hover { transform: scale(1.1); }
+
+        .spots-cell { font-size: 11px; line-height: 1.6; }
+
+        .empty-row td {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 24px;
+            font-style: italic;
+        }
+
+        /* ── Lightbox ── */
+        .lightbox {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lightbox.open { display: flex; }
+
+        .lightbox img {
+            max-width: 90vw;
+            max-height: 85vh;
+            border-radius: var(--radius-md);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 24px;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            line-height: 1;
+            width: auto;
+            padding: 4px 8px;
+        }
+
+        /* ── Misc ── */
+        .pill {
+            display: inline-block;
+            padding: 2px 7px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .pill-yes { background: var(--primary-light); color: var(--primary); }
+        .pill-no { background: var(--danger-light); color: var(--danger); }
+
+        @media (max-width: 480px) {
+            .analytics-strip { grid-template-columns: 1fr 1fr; }
+            .analytics-strip .stat-card:last-child { grid-column: 1 / -1; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * { transition: none !important; }
+        }
+    </style>
+</head>
+<body>
+<div class="app">
+
+    <!-- Header -->
+    <div class="app-header">
+        <div>
+            <h1>Alopecia Tracker</h1>
+            <p>Treatment log & routine monitor</p>
+        </div>
+        <span class="date-badge" id="today-badge"></span>
+    </div>
+
+    <!-- Analytics Strip -->
+    <div class="analytics-strip">
+        <div class="stat-card">
+            <div class="stat-label">Entries</div>
+            <div class="stat-value" id="stat-total">0</div>
+            <div class="stat-sub">logged</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Adherence</div>
+            <div class="stat-value" id="stat-adherence">—</div>
+            <div class="stat-sub">treatment rate</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Trend</div>
+            <div class="stat-value" id="stat-trend" style="font-size:18px;">—</div>
+            <div class="stat-sub" id="stat-trend-sub">primary spot, last 3</div>
+        </div>
+    </div>
+
+    <!-- Spots Card -->
+    <div class="card">
+        <div class="card-title">Spots</div>
+        <div class="spots-list" id="spots-list"></div>
+        <button class="btn-add-spot" onclick="addSpot()" style="margin-top:12px">
+            ＋ Add Spot
+        </button>
+    </div>
+
+    <!-- Daily Log Card -->
+    <div class="card">
+        <div class="card-title">Daily Log</div>
+
+        <div class="toggle-row">
+            <span class="toggle-label">Applied topical treatment / prescription</span>
+            <label class="toggle">
+                <input type="checkbox" id="treatment-checkbox">
+                <span class="toggle-track"></span>
+            </label>
+        </div>
+
+        <div class="toggle-row" style="padding-top:14px; border-bottom: none; flex-direction:column; align-items:flex-start; gap:10px;">
+            <label style="margin-bottom:0;">Daily Stress Level</label>
+            <div class="range-wrap" style="width:100%">
+                <input type="range" id="stress-level" min="1" max="10" step="1" value="5" oninput="updateStress()">
+                <span class="range-value" id="stress-val">5/10</span>
+            </div>
+            <div id="stress-insight" class="insight-box">
+                <strong>High Stress Alert</strong> — Elevated stress can fuel autoimmune triggers. Consider a 5-minute scalp massage with a soothing carrier oil, or a mindfulness breathing session tonight.
+            </div>
+        </div>
+    </div>
+
+    <!-- Photo Upload Card -->
+    <div class="card">
+        <div class="card-title">Progress Photos</div>
+        <div class="photo-drop" id="photo-drop">
+            <input type="file" id="photo-input" accept="image/*" multiple onchange="handlePhotoInput(event)">
+            <div class="photo-drop-icon">📷</div>
+            <div class="photo-drop-label"><strong>Tap to add photos</strong><br>Stored locally — never uploaded</div>
+        </div>
+        <div class="photo-preview" id="photo-preview"></div>
+    </div>
+
+    <!-- Log Button -->
+    <div style="margin-bottom:20px;">
+        <button class="btn-primary" onclick="logEntry()">Save Entry</button>
+    </div>
+
+    <!-- History Card -->
+    <div class="card">
+        <div class="history-header">
+            <span class="history-title">Entry Log</span>
+            <button class="btn-clear" onclick="clearLogs()">Clear history</button>
+        </div>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Spots</th>
+                        <th>Treated</th>
+                        <th>Stress</th>
+                        <th>Photos</th>
+                    </tr>
+                </thead>
+                <tbody id="log-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+    <img id="lightbox-img" src="" alt="Progress photo">
+</div>
+
+<script>
+    /* ══════════════════════════════════════════
+       STATE
+    ══════════════════════════════════════════ */
+    let spots = [];         // { id, name, diameter }
+    let pendingPhotos = []; // { dataURL }
+    let spotCounter = 0;
+
+    const STORAGE_KEY = 'alopeciaLogs_v2';
+
+    /* ══════════════════════════════════════════
+       INIT
+    ══════════════════════════════════════════ */
+    window.onload = () => {
+        document.getElementById('today-badge').textContent =
+            new Date().toLocaleDateString(undefined, { weekday:'short', month:'short', day:'numeric' });
+        addSpot('Spot A – Crown');
+        updateStress();
+        renderLogs();
+        updateAnalytics();
+    };
+
+    /* ══════════════════════════════════════════
+       SPOTS
+    ══════════════════════════════════════════ */
+    function addSpot(defaultName = '') {
+        const id = ++spotCounter;
+        spots.push({ id, name: defaultName || `Spot ${String.fromCharCode(64 + id)}`, diameter: 2.0 });
+        renderSpots();
+    }
+
+    function removeSpot(id) {
+        spots = spots.filter(s => s.id !== id);
+        renderSpots();
+    }
+
+    function renderSpots() {
+        const list = document.getElementById('spots-list');
+        list.innerHTML = '';
+        spots.forEach(spot => {
+            const px = Math.min(Math.max(spot.diameter * 8.5, 6), 62);
+            const el = document.createElement('div');
+            el.className = 'spot-item';
+            el.dataset.id = spot.id;
+            el.innerHTML = `
+                <div class="spot-header">
+                    <input class="spot-name-input" value="${escHtml(spot.name)}"
+                        placeholder="Name (e.g. Crown)"
+                        oninput="updateSpotName(${spot.id}, this.value)">
+                    <button class="btn-remove-spot" onclick="removeSpot(${spot.id})" title="Remove spot">×</button>
+                </div>
+                <div style="margin-bottom:8px;">
+                    <label>Diameter <span style="font-family:var(--font-mono);font-size:12px;color:var(--primary);">${spot.diameter.toFixed(1)} cm</span></label>
+                    <div class="range-wrap">
+                        <input type="range" min="0.2" max="6.0" step="0.1" value="${spot.diameter}"
+                            oninput="updateSpotDiameter(${spot.id}, this.value, this)">
+                        <span class="range-value">${spot.diameter.toFixed(1)}</span>
+                    </div>
+                </div>
+                <div class="spot-viz">
+                    <div class="spot-circle-wrap">
+                        <div class="spot-circle" style="width:${px}px;height:${px}px;"></div>
+                    </div>
+                    <span style="font-size:11px;color:var(--text-muted);line-height:1.5;">
+                        Approx. scale<br>within 64px frame
+                    </span>
+                </div>`;
+            list.appendChild(el);
+        });
+    }
+
+    function updateSpotName(id, val) {
+        const s = spots.find(s => s.id === id);
+        if (s) s.name = val;
+    }
+
+    function updateSpotDiameter(id, val, rangeEl) {
+        const s = spots.find(s => s.id === id);
+        if (!s) return;
+        s.diameter = parseFloat(val);
+
+        // Update label and circle within this spot-item
+        const item = rangeEl.closest('.spot-item');
+        const px = Math.min(Math.max(s.diameter * 8.5, 6), 62);
+        item.querySelector('.range-value').textContent = s.diameter.toFixed(1);
+        item.querySelector('label span').textContent = `${s.diameter.toFixed(1)} cm`;
+        item.querySelector('.spot-circle').style.width = px + 'px';
+        item.querySelector('.spot-circle').style.height = px + 'px';
+    }
+
+    /* ══════════════════════════════════════════
+       STRESS
+    ══════════════════════════════════════════ */
+    function updateStress() {
+        const val = document.getElementById('stress-level').value;
+        document.getElementById('stress-val').textContent = `${val}/10`;
+        document.getElementById('stress-insight').classList.toggle('show', parseInt(val) >= 7);
+    }
+
+    /* ══════════════════════════════════════════
+       PHOTO HANDLING
+    ══════════════════════════════════════════ */
+    function handlePhotoInput(e) {
+        const files = Array.from(e.target.files);
+        files.forEach(file => {
+            const reader = new FileReader();
+            reader.onload = ev => {
+                resizeImage(ev.target.result, 300, dataURL => {
+                    pendingPhotos.push({ dataURL });
+                    renderPendingPhotos();
+                });
+            };
+            reader.readAsDataURL(file);
+        });
+        e.target.value = '';
+    }
+
+    function resizeImage(dataURL, maxSize, cb) {
+        const img = new Image();
+        img.onload = () => {
+            const scale = Math.min(1, maxSize / Math.max(img.width, img.height));
+            const canvas = document.createElement('canvas');
+            canvas.width = Math.round(img.width * scale);
+            canvas.height = Math.round(img.height * scale);
+            canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+            cb(canvas.toDataURL('image/jpeg', 0.75));
+        };
+        img.src = dataURL;
+    }
+
+    function renderPendingPhotos() {
+        const wrap = document.getElementById('photo-preview');
+        wrap.innerHTML = '';
+        pendingPhotos.forEach((p, i) => {
+            const div = document.createElement('div');
+            div.className = 'photo-thumb-wrap';
+            div.innerHTML = `
+                <img class="photo-thumb" src="${p.dataURL}" alt="Photo ${i+1}">
+                <button class="photo-remove" onclick="removePendingPhoto(${i})">×</button>`;
+            wrap.appendChild(div);
+        });
+    }
+
+    function removePendingPhoto(idx) {
+        pendingPhotos.splice(idx, 1);
+        renderPendingPhotos();
+    }
+
+    /* ══════════════════════════════════════════
+       LOGGING
+    ══════════════════════════════════════════ */
+    function logEntry() {
+        if (spots.length === 0) {
+            alert('Add at least one spot before logging.');
+            return;
+        }
+
+        const entry = {
+            date: new Date().toLocaleDateString(undefined, { month:'short', day:'numeric', year:'numeric' }),
+            ts: Date.now(),
+            spots: spots.map(s => ({ name: s.name, diameter: s.diameter })),
+            treated: document.getElementById('treatment-checkbox').checked,
+            stress: parseInt(document.getElementById('stress-level').value),
+            photos: pendingPhotos.map(p => p.dataURL)
+        };
+
+        const history = getHistory();
+        history.unshift(entry);
+        saveHistory(history);
+
+        // Reset
+        document.getElementById('treatment-checkbox').checked = false;
+        document.getElementById('stress-level').value = 5;
+        updateStress();
+        pendingPhotos = [];
+        renderPendingPhotos();
+
+        renderLogs();
+        updateAnalytics();
+    }
+
+    function getHistory() {
+        try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+        catch { return []; }
+    }
+
+    function saveHistory(h) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(h));
+    }
+
+    function clearLogs() {
+        if (confirm('Clear your entire tracking history? This cannot be undone.')) {
+            localStorage.removeItem(STORAGE_KEY);
+            renderLogs();
+            updateAnalytics();
+        }
+    }
+
+    /* ══════════════════════════════════════════
+       RENDER HISTORY
+    ══════════════════════════════════════════ */
+    function renderLogs() {
+        const history = getHistory();
+        const body = document.getElementById('log-body');
+        body.innerHTML = '';
+
+        if (history.length === 0) {
+            body.innerHTML = '<tr class="empty-row"><td colspan="5">No entries yet — log your first day above.</td></tr>';
+            return;
+        }
+
+        history.forEach(entry => {
+            const spotsText = (entry.spots || [])
+                .map(s => `${escHtml(s.name)}: ${s.diameter} cm`)
+                .join('<br>');
+
+            const photosCell = (entry.photos || []).length > 0
+                ? `<div class="log-thumbs">${entry.photos.map(d =>
+                    `<img class="log-thumb" src="${d}" onclick="openLightbox('${d.replace(/'/g,"\\'")}')">`)
+                    .join('')}</div>`
+                : '<span style="color:var(--text-muted);font-size:11px;">—</span>';
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><strong>${entry.date}</strong></td>
+                <td class="spots-cell">${spotsText || '—'}</td>
+                <td><span class="pill ${entry.treated ? 'pill-yes' : 'pill-no'}">${entry.treated ? 'Yes' : 'No'}</span></td>
+                <td style="font-family:var(--font-mono)">${entry.stress}/10</td>
+                <td>${photosCell}</td>`;
+            body.appendChild(tr);
+        });
+    }
+
+    /* ══════════════════════════════════════════
+       ANALYTICS
+    ══════════════════════════════════════════ */
+    function updateAnalytics() {
+        const history = getHistory();
+        const total = history.length;
+
+        document.getElementById('stat-total').textContent = total;
+
+        if (total === 0) {
+            document.getElementById('stat-adherence').textContent = '—';
+            document.getElementById('stat-trend').textContent = '—';
+            document.getElementById('stat-trend').className = 'stat-value';
+            return;
+        }
+
+        // Adherence
+        const treatedCount = history.filter(e => e.treated).length;
+        const pct = Math.round((treatedCount / total) * 100);
+        document.getElementById('stat-adherence').textContent = `${pct}%`;
+
+        // Trend: primary spot (first spot in each entry) over last 3
+        const recent = history.slice(0, 3).map(e => e.spots && e.spots[0] ? e.spots[0].diameter : null).filter(v => v !== null);
+        const trendEl = document.getElementById('stat-trend');
+        const subEl = document.getElementById('stat-trend-sub');
+
+        if (recent.length < 2) {
+            trendEl.textContent = '—';
+            trendEl.className = 'stat-value';
+            subEl.textContent = 'need 2+ entries';
+            return;
+        }
+
+        const first = recent[recent.length - 1]; // oldest
+        const last = recent[0];                  // newest
+        const delta = last - first;
+
+        if (Math.abs(delta) <= 0.1) {
+            trendEl.textContent = '→ Stable';
+            trendEl.className = 'stat-value trend-stable';
+        } else if (delta > 0) {
+            trendEl.textContent = `↑ +${delta.toFixed(1)}`;
+            trendEl.className = 'stat-value trend-up';
+        } else {
+            trendEl.textContent = `↓ ${delta.toFixed(1)}`;
+            trendEl.className = 'stat-value trend-down';
+        }
+        subEl.textContent = `primary spot, last ${recent.length}`;
+    }
+
+    /* ══════════════════════════════════════════
+       LIGHTBOX
+    ══════════════════════════════════════════ */
+    function openLightbox(src) {
+        document.getElementById('lightbox-img').src = src;
+        document.getElementById('lightbox').classList.add('open');
+    }
+
+    function closeLightbox() {
+        document.getElementById('lightbox').classList.remove('open');
+        document.getElementById('lightbox-img').src = '';
+    }
+
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+    /* ══════════════════════════════════════════
+       UTILS
+    ══════════════════════════════════════════ */
+    function escHtml(str) {
+        return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+</script>
+</body>
+</html>
